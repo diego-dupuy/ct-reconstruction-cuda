@@ -1,0 +1,7 @@
+astra-toolbox
+numpy
+scipy
+scikit-image
+matplotlib
+pandas
+pytest
