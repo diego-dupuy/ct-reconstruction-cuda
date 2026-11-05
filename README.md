@@ -69,10 +69,12 @@ Total GPU time for the whole volume and quality against the original volume:
 
 ### 3D bone surface
 
-The bone threshold is checked on a slice before building the 3D surface (red = bone), then marching cubes
+Before building the 3D surface I check the bone threshold on the central slice (red contour = bone).
+The automatic Otsu threshold works for the fan-beam volume (0.28), but in the cone-beam volume it split fat
+from muscle instead of tissue from bone, so I chose 0.29 by hand from the histogram. Marching cubes then
 extracts the rib cage and spine.
 
-| Threshold check | Bone isosurface (cone beam, CGLS) |
+| Threshold check (cone beam, 0.29) | Bone isosurface (cone beam, CGLS) |
 |---|---|
 | ![](docs/figures/bone_threshold_check.png) | ![](docs/figures/conebeam_isosurface.png) |
 
