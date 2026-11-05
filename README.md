@@ -37,22 +37,44 @@ PSNR and SSIM compare each reconstruction with the original phantom (higher is b
 
 ### 3D thoracic CT (512 × 512 × 280, Google Colab, Tesla T4 GPU)
 
-Total GPU time to reconstruct the whole volume:
+Total GPU time for the whole volume and quality against the original volume:
 
-| Method | Fan beam, slice by slice | Cone beam, whole volume |
-|---|---|---|
-| BP | 1.87 s | 0.59 s |
-| FBP / FDK | 2.58 s | **0.93 s** |
-| SIRT | 60.44 s (30 it.) | 9.02 s (5 it.) |
-| SART | 4.25 s (30 it.) | not available in ASTRA |
-| CGLS | 41.58 s (20 it.) | 16.80 s (10 it.) |
+**Fan beam, slice by slice (280 slices, 360 angles)**
 
-FDK reconstructs the whole volume in under a second, 2.8× faster than FBP slice by slice. CGLS takes about 18× longer than FDK,
-but gives less noise and better soft-tissue contrast.
+| Method | Iterations | GPU time | PSNR (dB) | SSIM |
+|---|---|---|---|---|
+| BP | – | 1.9 s | – | – |
+| FBP | – | 2.4 s | 37.7 | 0.90 |
+| SIRT | 50 | 102 s | 31.4 | 0.80 |
+| SART | 2 passes, random order | 93 s | **40.8** | **0.95** |
+| CGLS | 30 | 63 s | 39.2 | 0.93 |
+
+**Cone beam, whole volume at once (360 angles)**
+
+| Method | Iterations | GPU time | PSNR (dB) | SSIM |
+|---|---|---|---|---|
+| BP | – | 0.7 s | – | – |
+| FDK | – | **0.9 s** | **32.8** | **0.81** |
+| SIRT | 20 | 72 s | 28.6 | 0.72 |
+| CGLS | 10 | 37 s | 30.7 | 0.77 |
+| SART | – | not available in ASTRA | – | – |
+
+* FDK reconstructs the whole volume in under a second, 2.6× faster than FBP slice by slice.
+* In fan beam, the corrected SART is the most accurate method (40.8 dB), but it costs ~40× more time than FBP.
+* In cone beam, with few iterations, the iterative methods are still below FDK: it is the speed vs. quality trade-off.
 
 | Fan beam (central slice) | Cone beam (central slice) |
 |---|---|
-| ![](docs/figures/academic_fanbeam_colab_t4.png) | ![](docs/figures/academic_conebeam_colab_t4.png) |
+| ![](docs/figures/fanbeam_slice.png) | ![](docs/figures/conebeam_slice.png) |
+
+### 3D bone surface
+
+The bone threshold is checked on a slice before building the 3D surface (red = bone), then marching cubes
+extracts the rib cage and spine.
+
+| Threshold check | Bone isosurface (cone beam, CGLS) |
+|---|---|
+| ![](docs/figures/bone_threshold_check.png) | ![](docs/figures/conebeam_isosurface.png) |
 
 ## What I fixed when I reviewed the original code
 
