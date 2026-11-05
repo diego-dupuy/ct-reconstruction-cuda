@@ -49,7 +49,7 @@ def show_error_maps(reference, images, limit=0.2, ncols=3):
 
 
 def show_isosurface(volume, level, step_size=2, title="Bone isosurface"):
-    """Marching cubes at `level` (bone threshold). step_size=2 -> ~4x fewer triangles,
+    """Marching cubes at `level` (bone threshold). step_size=2-3 -> 4-9x fewer triangles,
     so the mesh fits in Colab's RAM."""
     verts, faces, _, _ = measure.marching_cubes(volume, level=level, step_size=step_size)
     fig = plt.figure(figsize=(8, 8))
